@@ -16,12 +16,7 @@ class CreateBoardingHousesTable extends Migration
         Schema::create('boarding_houses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->integer('image_id');
             $table->integer('status');
-
-            $table->unsignedBigInteger('rating_id')->nullable();
-            $table->foreign('rating_id')
-            ->references('id')->on('ratings');
 
             $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')
@@ -30,6 +25,8 @@ class CreateBoardingHousesTable extends Migration
             $table->string('address_address')->nullable();
             $table->string('address_latitude')->nullable();
             $table->string('address_longitude')->nullable();
+
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

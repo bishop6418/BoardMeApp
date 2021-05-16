@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BoardingHouse;
 use Illuminate\Http\Request;
+use App\Models\BoardingHouse;
+use Illuminate\Support\Facades\Auth;
 
 class BoardingHouseController extends Controller
 {
     public function boardingHouseData($boardingHouse, $request)
     {
         $boardingHouse->name = $request->name;
-        if($request->image){
-            $boardingHouse->image = $request->image;
-        }
+        $boardingHouse->status = $request->status;
+        $boadringHouse->category_id = $request->category_id;
+
+        //address
+        $boadringHouse->address_address = $boadringHouse->address_address;
+        $boadringHouse->address_latitude = $boadringHouse->address_latitude;
+        $boadringHouse->address_longtitude = $boadringHouse->address_longtitude;
+
+        $boadringHouse->user_id = auth()->user()->id;
     }
 
     /**
@@ -35,10 +42,19 @@ class BoardingHouseController extends Controller
     public function store(Request $request)
     {
         $boardingHouse = new BoardingHouse();
-        $request->image =  uploadPhotos($request->image, 'user_images/');
         $this->boardingHouseData($boardingHouse, $request);
         $boardingHouse->save();
 
+        //images
+        foreach($image in $request->images)
+        {
+            $boarding_house_image = new BoardingHouseImages();
+            $boarding_house_image->boarding_houses_id = $boardingHouse->id;
+            $boarding_house_image->image =  uploadPhotos($image 'user_images/');
+            $boarding_house_image->isThumbnail = $request->isThumbnail;
+            $boardingHouse->save();
+        }
+         
         return $boardingHouse;
     }
 
@@ -50,7 +66,7 @@ class BoardingHouseController extends Controller
      */
     public function show($id)
     {
-        $boardingHouse = BoardingHouse::with('users')->findOrFail($id);
+        $boardingHouse = BoardingHouse::with('users','images')->findOrFail($id);
         return $boardingHouse;
     }
 
@@ -66,8 +82,17 @@ class BoardingHouseController extends Controller
         $request->image =  uploadPhotos($request->image, 'user_images/');
 
         $boardingHouse = BoardingHouse::findOrFail($id);
-        $this->boardingHouseData($boardingHouse, $request);
         $boardingHouse->save();
+
+        //images
+        foreach($image in $request->images)
+        {
+            $boarding_house_image = new BoardingHouseImages();
+            $boarding_house_image->boarding_houses_id = $boardingHouse->id;
+            $boarding_house_image->image =  uploadPhotos($image 'user_images/');
+            $boarding_house_image->isThumbnail = $request->isThumbnail;
+            $boardingHouse->save();
+        }
 
         return $boardingHouse;
     }
