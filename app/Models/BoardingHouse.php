@@ -19,8 +19,13 @@ class BoardingHouse extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function ratings()
+    public function reviews()
     {
         return $this->hasMany(Rating::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(BoardingHouseImages::class, 'boarding_houses_id', 'id');
     }
 }

@@ -27,7 +27,7 @@ class UserPostRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => ['required','email', Rule::unique('users')->ignore($this->id)],
-            'password' => ['required', Rule::unique('users')->ignore($this->id)],
+            'password' => ['required','confirmed','min:8'],
             'mobile' => 'required'
         ];
     }
